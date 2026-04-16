@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header role="banner">
+        <h1>Flashcards App</h1>
+        <nav>
+            <button id="new-deck-btn" aria-label="Create a new deck">New Deck</button>
+        </nav>
+    </header>
+
+    <aside id="sidebar" role="complementary" aria-label="Decks sidebar">
+        <h2>Decks</h2>
+        <ul id="decks-list" aria-label="List of decks">
+            <!-- Decks will be dynamically added here via JavaScript -->
+        </ul>
+    </aside>
+
+    <main id="main-content" role="main" aria-label="Cards area">
+        <section id="cards-section">
+            <h2>Cards</h2>
+            <div id="cards-container">
+                <!-- Cards will be displayed here -->
+            </div>
+            <button id="add-card-btn" aria-label="Add a new card">Add Card</button>
+        </section>
+        <section id="study-section" hidden>
+            <h2>Study Mode</h2>
+            <div id="study-card">
+                <!-- Study interface will be here -->
+            </div>
+            <button id="flip-card-btn" aria-label="Flip the card">Flip</button>
+            <button id="next-card-btn" aria-label="Next card">Next</button>
+        </section>
+    </main>
+
+    <footer role="contentinfo">
+        <p>&copy; 2026 Flashcards App. Built with vanilla JS.</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
