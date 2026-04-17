@@ -29,7 +29,7 @@
             <div id="cards-container">
                 <!-- Cards will be displayed here -->
             </div>
-            <button id="add-card-btn" aria-label="Add a new card">Add Card</button>
+            <button id="add-card-btn" type="button" data-modal-target="#app-modal" data-modal-action="create-card" aria-label="Add a new card">Add Card</button>
         </section>
         <section id="study-section" hidden>
             <h2>Study Mode</h2>
@@ -48,13 +48,25 @@
                 <button type="button" class="modal-close-btn" data-modal-close aria-label="Close modal">×</button>
             </div>
             <div class="modal-content">
-                <form id="deck-form">
-                    <div class="form-group">
-                        <label for="deck-name-input">Deck name</label>
-                        <input id="deck-name-input" name="deckTitle" type="text" required />
+                <form id="modal-form">
+                    <div class="form-section" data-form-section="deck">
+                        <div class="form-group">
+                            <label for="deck-name-input">Deck name</label>
+                            <input id="deck-name-input" name="deckTitle" type="text" required />
+                        </div>
+                    </div>
+                    <div class="form-section hidden" data-form-section="card">
+                        <div class="form-group">
+                            <label for="card-front-input">Card front</label>
+                            <textarea id="card-front-input" name="cardFront" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="card-back-input">Card back</label>
+                            <textarea id="card-back-input" name="cardBack" rows="3" required></textarea>
+                        </div>
                     </div>
                     <div class="modal-actions">
-                        <button type="submit" class="save-btn">Save deck</button>
+                        <button type="submit" class="save-btn">Save</button>
                         <button type="button" class="modal-close-btn" data-modal-close>Cancel</button>
                     </div>
                 </form>
