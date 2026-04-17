@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards App</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <header role="banner">
+        <h1>Flashcards App</h1>
+        <nav>
+            <button id="new-deck-btn" type="button" data-modal-target="#app-modal" data-modal-action="create-deck" aria-label="Create a new deck">New Deck</button>
+        </nav>
+    </header>
+
+    <aside id="sidebar" role="complementary" aria-label="Decks sidebar">
+        <h2>Decks</h2>
+        <ul id="decks-list" aria-label="List of decks">
+            <!-- Decks will be dynamically added here via JavaScript -->
+        </ul>
+    </aside>
+
+    <main id="main-content" role="main" aria-label="Cards area">
+        <section id="cards-section">
+            <h2>Cards</h2>
+            <div id="cards-container">
+                <!-- Cards will be displayed here -->
+            </div>
+            <button id="add-card-btn" type="button" data-modal-target="#app-modal" data-modal-action="create-card" aria-label="Add a new card">Add Card</button>
+        </section>
+        <section id="study-section" hidden>
+            <h2>Study Mode</h2>
+            <div id="study-card">
+                <!-- Study interface will be here -->
+            </div>
+            <button id="flip-card-btn" aria-label="Flip the card">Flip</button>
+            <button id="next-card-btn" aria-label="Next card">Next</button>
+        </section>
+    </main>
+
+    <div class="modal-overlay hidden" id="app-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
+        <div class="modal" role="document">
+            <div class="modal-header">
+                <h2 id="modal-title">Deck</h2>
+                <button type="button" class="modal-close-btn" data-modal-close aria-label="Close modal">×</button>
+            </div>
+            <div class="modal-content">
+                <form id="modal-form">
+                    <div class="form-section" data-form-section="deck">
+                        <div class="form-group">
+                            <label for="deck-name-input">Deck name</label>
+                            <input id="deck-name-input" name="deckTitle" type="text" required />
+                        </div>
+                    </div>
+                    <div class="form-section hidden" data-form-section="card">
+                        <div class="form-group">
+                            <label for="card-front-input">Card front</label>
+                            <textarea id="card-front-input" name="cardFront" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="card-back-input">Card back</label>
+                            <textarea id="card-back-input" name="cardBack" rows="3" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="submit" class="save-btn">Save</button>
+                        <button type="button" class="modal-close-btn" data-modal-close>Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer role="contentinfo">
+        <p>&copy; 2026 Flashcards App. Built with vanilla JS.</p>
+    </footer>
+</body>
+</html>
