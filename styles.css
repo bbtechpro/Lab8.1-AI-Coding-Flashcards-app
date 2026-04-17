@@ -17,6 +17,27 @@ header { background: var(--primary-color); color: white; padding: 1rem; display:
 #decks-list li { padding: 0.75rem; cursor: pointer; border-radius: var(--radius-md); margin-bottom: 0.5rem; background: white; }
 #decks-list li.active { background: var(--primary-color); color: white; }
 
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+#search-bar {
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: var(--radius-md);
+    width: 200px;
+}
+
 /* 3D Card Flip */
 .card { perspective: 1000px; height: 200px; cursor: pointer; }
 .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
