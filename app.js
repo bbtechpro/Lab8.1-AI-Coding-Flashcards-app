@@ -16,6 +16,8 @@ const decks = [];
 let selectedDeckId = null;
 let deckModalMode = 'create';
 let deckEditId = null;
+let cardModalMode = 'create';
+let cardEditId = null;
 
 const STORAGE_KEY = 'flashcards-app-decks';
 const STORAGE_SELECTED_DECK = 'flashcards-app-selected-deck';
@@ -27,8 +29,10 @@ const decksList = document.getElementById('decks-list');
 const cardsSectionHeading = document.querySelector('#cards-section h2');
 const cardsContainer = document.getElementById('cards-container');
 const addCardBtn = document.getElementById('add-card-btn');
-const deckForm = document.getElementById('deck-form');
+const modalForm = document.getElementById('modal-form');
 const deckNameInput = document.getElementById('deck-name-input');
+const cardFrontInput = document.getElementById('card-front-input');
+const cardBackInput = document.getElementById('card-back-input');
 const modal = document.getElementById('app-modal');
 
 function loadState() {
@@ -102,10 +106,20 @@ function renderSelectedDeck() {
   cardsContainer.innerHTML = deck.cards.length
     ? deck.cards
         .map(
-          (card, index) => `
-          <div class="card" tabindex="0">
-            <p class="card-front">${escapeHtml(card.front)}</p>
-            <p class="card-back">${escapeHtml(card.back)}</p>
+          (card) => `
+          <div class="card" data-card-id="${card.id}" tabindex="0">
+            <div class="card-inner">
+              <div class="card-face card-front">
+                <p>${escapeHtml(card.front)}</p>
+                <div class="card-actions">
+                  <button type="button" class="save-btn" data-edit-card="${card.id}">Edit</button>
+                  <button type="button" class="delete-btn" data-delete-card="${card.id}">Delete</button>
+                </div>
+              </div>
+              <div class="card-face card-back">
+                <p>${escapeHtml(card.back)}</p>
+              </div>
+            </div>
           </div>`
         )
         .join('')
@@ -152,6 +166,35 @@ function deleteDeck(id) {
   }
 
   renderDecks();
+  renderSelectedDeck();
+  saveState();
+}
+
+function createCard(deck, front, back) {
+  const newCard = {
+    id: `card-${Date.now()}`,
+    front: front.trim(),
+    back: back.trim()
+  };
+
+  deck.cards.push(newCard);
+  renderSelectedDeck();
+  saveState();
+}
+
+function updateCard(deck, id, front, back) {
+  const card = deck.cards.find((item) => item.id === id);
+  if (!card) return;
+  card.front = front.trim();
+  card.back = back.trim();
+  renderSelectedDeck();
+  saveState();
+}
+
+function deleteCard(deck, id) {
+  const index = deck.cards.findIndex((item) => item.id === id);
+  if (index === -1) return;
+  deck.cards.splice(index, 1);
   renderSelectedDeck();
   saveState();
 }
@@ -207,11 +250,9 @@ function trapFocus(event) {
       event.preventDefault();
       lastFocusable.focus();
     }
-  } else {
-    if (document.activeElement === lastFocusable) {
-      event.preventDefault();
-      firstFocusable.focus();
-    }
+  } else if (document.activeElement === lastFocusable) {
+    event.preventDefault();
+    firstFocusable.focus();
   }
 }
 
@@ -229,19 +270,39 @@ function getFocusableElements(container) {
   );
 }
 
-function prepareDeckForm({ mode = 'create', deckId = null } = {}) {
-  deckModalMode = mode;
-  deckEditId = deckId;
+function prepareForm(mode = 'create', type = 'deck', id = null) {
+  deckModalMode = type === 'deck' ? mode : 'create';
+  cardModalMode = type === 'card' ? mode : 'create';
+  deckEditId = type === 'deck' ? id : null;
+  cardEditId = type === 'card' ? id : null;
 
-  if (mode === 'edit' && deckId) {
-    const deck = decks.find((item) => item.id === deckId);
-    if (deck) {
-      deckNameInput.value = deck.title;
-      document.getElementById('modal-title').textContent = 'Edit Deck';
-    }
+  const deckSection = modal.querySelector('[data-form-section="deck"]');
+  const cardSection = modal.querySelector('[data-form-section="card"]');
+  const titleElement = document.getElementById('modal-title');
+
+  if (type === 'deck') {
+    deckSection.classList.remove('hidden');
+    cardSection.classList.add('hidden');
+    titleElement.textContent = mode === 'edit' ? 'Edit Deck' : 'New Deck';
+    const deck = decks.find((item) => item.id === id);
+    deckNameInput.value = deck ? deck.title : '';
+    cardFrontInput.value = '';
+    cardBackInput.value = '';
   } else {
-    deckNameInput.value = '';
-    document.getElementById('modal-title').textContent = 'New Deck';
+    deckSection.classList.add('hidden');
+    cardSection.classList.remove('hidden');
+    titleElement.textContent = mode === 'edit' ? 'Edit Card' : 'New Card';
+    const deck = decks.find((item) => item.id === selectedDeckId);
+    if (mode === 'edit' && deck && id) {
+      const card = deck.cards.find((item) => item.id === id);
+      if (card) {
+        cardFrontInput.value = card.front;
+        cardBackInput.value = card.back;
+      }
+    } else {
+      cardFrontInput.value = '';
+      cardBackInput.value = '';
+    }
   }
 }
 
@@ -261,7 +322,12 @@ openModalButtons.forEach((button) => {
     const modalElement = document.querySelector(target);
 
     if (action === 'create-deck') {
-      prepareDeckForm({ mode: 'create' });
+      prepareForm('create', 'deck');
+    }
+
+    if (action === 'create-card') {
+      if (!selectedDeckId) return;
+      prepareForm('create', 'card');
     }
 
     if (modalElement) {
@@ -287,16 +353,32 @@ modalOverlays.forEach((overlay) => {
   });
 });
 
-deckForm.addEventListener('submit', (event) => {
+modalForm.addEventListener('submit', (event) => {
   event.preventDefault();
 
-  const title = deckNameInput.value.trim();
-  if (!title) return;
+  const deckTitle = deckNameInput.value.trim();
+  const cardFront = cardFrontInput.value.trim();
+  const cardBack = cardBackInput.value.trim();
 
-  if (deckModalMode === 'edit' && deckEditId) {
-    updateDeck(deckEditId, title);
+  const isDeckForm = !modal.querySelector('[data-form-section="deck"]').classList.contains('hidden');
+
+  if (isDeckForm) {
+    if (!deckTitle) return;
+    if (deckModalMode === 'edit' && deckEditId) {
+      updateDeck(deckEditId, deckTitle);
+    } else {
+      createDeck(deckTitle);
+    }
   } else {
-    createDeck(title);
+    if (!selectedDeckId || !cardFront || !cardBack) return;
+    const deck = decks.find((item) => item.id === selectedDeckId);
+    if (!deck) return;
+
+    if (cardModalMode === 'edit' && cardEditId) {
+      updateCard(deck, cardEditId, cardFront, cardBack);
+    } else {
+      createCard(deck, cardFront, cardBack);
+    }
   }
 
   closeModal(modal);
@@ -309,7 +391,7 @@ decksList.addEventListener('click', (event) => {
 
   if (editButton) {
     const deckId = editButton.dataset.editDeck;
-    prepareDeckForm({ mode: 'edit', deckId });
+    prepareForm('edit', 'deck', deckId);
     openModal(modal, editButton);
     return;
   }
@@ -326,19 +408,40 @@ decksList.addEventListener('click', (event) => {
   }
 });
 
+cardsContainer.addEventListener('click', (event) => {
+  const cardItem = event.target.closest('.card');
+  if (!cardItem) return;
+
+  const editButton = event.target.closest('[data-edit-card]');
+  const deleteButton = event.target.closest('[data-delete-card]');
+
+  if (editButton) {
+    const cardId = editButton.dataset.editCard;
+    prepareForm('edit', 'card', cardId);
+    openModal(modal, editButton);
+    return;
+  }
+
+  if (deleteButton) {
+    const cardId = deleteButton.dataset.deleteCard;
+    const deck = decks.find((item) => item.id === selectedDeckId);
+    if (deck) {
+      deleteCard(deck, cardId);
+    }
+    return;
+  }
+
+  if (event.target.closest('button')) {
+    return;
+  }
+
+  cardItem.classList.toggle('is-flipped');
+});
+
 addCardBtn.addEventListener('click', () => {
   if (!selectedDeckId) return;
-  const deck = decks.find((item) => item.id === selectedDeckId);
-  if (!deck) return;
-
-  const front = window.prompt('Enter the front text for the new card:');
-  if (!front) return;
-  const back = window.prompt('Enter the back text for the new card:');
-  if (back === null) return;
-
-  deck.cards.push({ front: front.trim(), back: back.trim() });
-  renderSelectedDeck();
-  saveState();
+  prepareForm('create', 'card');
+  openModal(modal, addCardBtn);
 });
 
 loadState();

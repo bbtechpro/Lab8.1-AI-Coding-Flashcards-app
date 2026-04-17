@@ -1,4 +1,14 @@
-My first prompt in 'Ask mode' was worded as this, "Using the information provided in this lab, build a Flashcards web app. The app should be a single-page app, with no build tools required. Your app should be able to create, edit, delete decks and cards, and study the cards in a deck. The app should be responsive and accessible. Create a minimal HTML skeleton for a Flashcards app with header, sidebar for decks, main area for cards, and a footer".
+Using the information provided in this lab, build a Flashcards web app. The app should be a single-page app, with no build tools required. Your app should be able to create, edit, delete decks and cards, and study the cards in a deck. The app should be responsive and accessible.
+
+- Part 1: Base UI & Layout
+Build the shell:
+
+## Header with app name + “New Deck” button.
+## Sidebar: list of decks; active deck highlighted.
+## Main: deck title, toolbar (search, shuffle, “New Card”), card area (card front/back), and controls (prev/next/flip).
+## Footer: short instructions.
+
+- My first prompt in 'Ask mode' was worded as this, "Using the information provided in this lab, build a Flashcards web app. The app should be a single-page app, with no build tools required. Your app should be able to create, edit, delete decks and cards, and study the cards in a deck. The app should be responsive and accessible. Create a minimal HTML skeleton for a Flashcards app with header, sidebar for decks, main area for cards, and a footer".
 
 Copilot's response: "
 Based on your request, I'll provide a minimal HTML skeleton for the Flashcards web app. Since this is a single-page app using vanilla JavaScript (no build tools), the structure focuses on semantic HTML for accessibility, with placeholders for dynamic content that will be managed via JavaScript (e.g., in app.js). The layout includes:
@@ -727,3 +737,31 @@ List/preview cards in deck (optional), but at minimum be able to cycle in Study 
 Edit/delete card actions.
 CSS flip animation for the study card.
 
+- Prompt: Add a CSS 3D flip animation to a .card on .is-flipped class toggle. Implement card create/edit/delete with delegated events.
+
+
+Applying the UI and animation markup updates, then replacing script with card CRUD logic.
+
+Done
+Added card flip animation and card CRUD with delegated events.
+
+What changed
+styles.css
+
+Added .card, .card-inner, .card-face, and .is-flipped styles
+Implemented 3D flip animation using transform-style: preserve-3d
+Added .card-actions styling for edit/delete buttons
+index.html
+
+Updated Add Card to open the modal in card creation mode
+Expanded modal form to support both deck and card forms
+app.js
+
+Added card create/edit/delete logic using delegated event handling on cardsContainer
+Clicking a card toggles .is-flipped
+Card edit/delete uses data-edit-card / data-delete-card
+Card creation/edit uses the shared modal form with dynamic mode handling
+Result
+Cards now flip in 3D on click
+Card CRUD is implemented through event delegation
+Deck/card modal reuses the accessible modal component cleanly
