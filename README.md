@@ -765,3 +765,15 @@ Result
 Cards now flip in 3D on click
 Card CRUD is implemented through event delegation
 Deck/card modal reuses the accessible modal component cleanly
+
+- Quality checks:
+
+✅ Smooth flip at 60fps on desktop and mobile.
+Editing a card persists and updates the current view.
+The save button on the edit card function does not save and close the window.
+- Prompt: The save button on the edit card function does not save and close the window.
+
+Fixed the save button issue for card editing. The problem was that the form submission event wasn't reliably triggering in the modal context. I changed the save button from type="submit" to type="button" and attached a click event listener directly to it, ensuring the save and close logic executes properly for both deck and card operations. The modal now closes and saves data correctly when editing cards.
+
+## This last "fix" deleted the cards I already had and broke the "Add Card" button. I am going to undo the last changes.
+I undid the changes and my deck of cards came back and my "Add Card" button works again. I may have to find the previous bug of the editing of the cards not saving and fix it manually.
