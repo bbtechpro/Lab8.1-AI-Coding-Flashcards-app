@@ -555,4 +555,175 @@ Works on buttons, links, form inputs, and list items
 Enhanced Accessibility: Includes prefers-reduced-motion and prefers-contrast media queries
 Copy this into your styles.css file!
 
-Similar code found with 1 license type - View matches
+- Prompt: Fix inconsistent class names between HTML/CSS
+Reviewing the HTML and CSS to identify class mismatches.
+
+Checking the JavaScript too, since class mismatches often involve dynamic elements.
+
+Found one definite mismatch: .skip-link is styled in CSS but not present in HTML. Adding it will improve accessibility and align the files.
+
+Edited
+index.html+1-0
+✅ Fixed the class mismatch by adding the .skip-link
+This aligns the HTML with the styles.css rule for .skip-link and improves accessibility for keyboard users.
+
+- Prompt: Are ther any more inconsistencies?
+Review Result
+No direct mismatches remain between the current static HTML and CSS selectors for the existing shell.
+
+Confirmed matches
+#new-deck-btn, #add-card-btn, #flip-card-btn, #next-card-btn all exist in HTML.
+#sidebar, #decks-list, #main-content, #cards-container, #study-card, #study-section all match CSS.
+.skip-link is now present in HTML and matches the CSS rule.
+Notes
+These selectors are present only in CSS and not yet in the static HTML:
+
+.delete-btn
+.save-btn
+.form-group
+.card
+.card-front
+.card-back
+a[role="button"]
+They are likely intended for dynamic UI elements created by JavaScript, so they are not necessarily inconsistent.
+
+- Part 2: Deck CRUD
+Implement “New Deck” modal with name field.
+Add deck to sidebar; select to switch active deck.
+Edit deck name and delete deck (confirm dialog).
+
+
+- Prompt: Create an accessible modal component in plain JS with focus trap, ESC to close, and return focus to opener.
+
+
+Updating the HTML, CSS, and JavaScript together so the modal component works cleanly.
+
+One CSS edit missed due to matching context; I’m locating the exact block and then I’ll add the modal behavior script.
+
+Adding the modal CSS at the end of styles.css, then I’ll populate app.js with the modal logic.
+
+Inspecting the exact trailing text in styles.css to patch safely.
+Accessible Modal Added
+What changed
+index.html
+
+Added modal markup with:
+role="dialog"
+aria-modal="true"
+aria-labelledby="modal-title"
+close button with data-modal-close
+overlay click close support
+Added a sample opener button: data-modal-target="#app-modal"
+styles.css
+
+Added modal styling for overlay, dialog, header, close button, and hidden state.
+Kept focus-visible styling for accessible keyboard navigation.
+app.js
+
+Added plain JS modal logic with:
+focus trap inside the modal
+Escape key to close
+overlay click to close
+return focus to the opener button after close
+Result
+You now have a working accessible modal component in plain JS with focus management and keyboard controls.
+
+- Prompt: Updating HTML structure for deck form modal and wiring the create button.
+
+Edited
+index.html+12-5
+Next I’ll replace app.js with the full modal and deck CRUD logic.
+
+Adding small UI styles for deck action buttons and modal form layout.
+
+Deck CRUD Implemented
+What changed
+app.js
+
+Added in-memory decks array
+Added deck creation, editing, deletion
+Added deck selection and UI rendering
+Wired modal form to create/edit decks
+Updated cards area to reflect selected deck
+Disabled Add Card until a deck is selected
+index.html
+
+Reused the accessible modal for deck create/edit
+Added form fields for deck name
+Wired New Deck to open the deck modal
+styles.css
+
+Added layout styles for .deck-actions and .modal-actions
+Result
+Create deck via modal
+Edit and delete decks from the deck list
+Deck list updates immediately
+Selected deck updates the cards panel dynamically
+If you want, I can next persist decks in localStorage so the state survives reloads.
+
+
+Updating HTML structure for deck form modal and wiring the create button.
+
+Edited
+index.html+12-5
+Next I’ll replace app.js with the full modal and deck CRUD logic.
+
+Adding small UI styles for deck action buttons and modal form layout.
+
+Deck CRUD Implemented
+What changed
+app.js
+
+Added in-memory decks array
+Added deck creation, editing, deletion
+Added deck selection and UI rendering
+Wired modal form to create/edit decks
+Updated cards area to reflect selected deck
+Disabled Add Card until a deck is selected
+index.html
+
+Reused the accessible modal for deck create/edit
+Added form fields for deck name
+Wired New Deck to open the deck modal
+styles.css
+
+Added layout styles for .deck-actions and .modal-actions
+Result
+Create deck via modal
+Edit and delete decks from the deck list
+Deck list updates immediately
+Selected deck updates the cards panel dynamically
+If you want, I can next persist decks in localStorage so the state survives reloads.
+
+- Prompt: Yes, persist decks in localStorage so the state survives reloads.
+
+Reviewing current deck state logic before adding persistence.
+
+Adding localStorage helpers now and wiring save/load around deck state operations.
+
+✅ Deck persistence is now implemented.
+
+What changed
+app.js
+Added loadState() to restore decks and selected deck from localStorage
+Added saveState() to persist deck data and selected deck
+Wired saveState() into:
+createDeck()
+updateDeck()
+deleteDeck()
+selectDeck()
+card creation flow
+On startup, the app now calls loadState() before rendering
+Result
+Decks and selection now survive page reloads using browser localStorage.
+
+- Quality checks
+✅ Pressing Tab cycles within modal.
+✅ Sidebar updates without reload.
+
+Part 3: Card CRUD + Flip Animation
+“New Card” button opens modal with “Front” and “Back” fields.
+List/preview cards in deck (optional), but at minimum be able to cycle in Study mode.
+Edit/delete card actions.
+CSS flip animation for the study card.
+

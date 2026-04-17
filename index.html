@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flashcards App</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     <header role="banner">
         <h1>Flashcards App</h1>
         <nav>
-            <button id="new-deck-btn" aria-label="Create a new deck">New Deck</button>
+            <button id="new-deck-btn" type="button" data-modal-target="#app-modal" data-modal-action="create-deck" aria-label="Create a new deck">New Deck</button>
         </nav>
     </header>
 
@@ -39,10 +41,29 @@
         </section>
     </main>
 
+    <div class="modal-overlay hidden" id="app-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
+        <div class="modal" role="document">
+            <div class="modal-header">
+                <h2 id="modal-title">Deck</h2>
+                <button type="button" class="modal-close-btn" data-modal-close aria-label="Close modal">×</button>
+            </div>
+            <div class="modal-content">
+                <form id="deck-form">
+                    <div class="form-group">
+                        <label for="deck-name-input">Deck name</label>
+                        <input id="deck-name-input" name="deckTitle" type="text" required />
+                    </div>
+                    <div class="modal-actions">
+                        <button type="submit" class="save-btn">Save deck</button>
+                        <button type="button" class="modal-close-btn" data-modal-close>Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <footer role="contentinfo">
         <p>&copy; 2026 Flashcards App. Built with vanilla JS.</p>
     </footer>
-
-    <script src="app.js"></script>
 </body>
 </html>
