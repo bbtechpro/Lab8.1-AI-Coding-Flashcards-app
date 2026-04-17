@@ -37,6 +37,19 @@ const render = () => {
             </div>
         `).join('');
     }
+    // Inside the render() function, update the card mapping:
+container.innerHTML = filteredCards.map(c => `
+    <div class="card" onclick="this.classList.toggle('is-flipped')">
+        <div class="card-inner">
+            <div class="card-face card-front">
+                ${c.front}
+                <button class="edit-card-btn" onclick="event.stopPropagation(); openEditWindow('${c.id}')">Edit</button>
+            </div>
+            <div class="card-face card-back">${c.back}</div>
+        </div>
+    </div>
+`).join('');
+
 };
 
 window.selectDeck = (id) => { state.selectedDeckId = id; saveState(); };
@@ -58,5 +71,53 @@ document.getElementById('add-card-btn').onclick = () => {
         saveState();
     }
 };
+window.openEditWindow = (cardId) => {
+    const activeDeck = state.decks.find(d => d.id === state.selectedDeckId);
+    const card = activeDeck.cards.find(c => c.id === cardId);
+
+    // 1. Open a new small window
+    const editWin = window.open("", "Edit Card", "width=400,height=500");
+
+    // 2. Define the HTML for the edit window
+    editWin.document.write(`
+        <html>
+        <head><title>Edit Card</title></head>
+        <body style="font-family: sans-serif; padding: 20px;">
+            <h3>Edit Flashcard</h3>
+            <label>Front:</label><br>
+            <textarea id="edit-front" style="width:100%; height:100px;">${card.front}</textarea><br><br>
+            <label>Back:</label><br>
+            <textarea id="edit-back" style="width:100%; height:100px;">${card.back}</textarea><br><br>
+            <button id="save-btn">Save Changes</button>
+            <button onclick="window.close()">Cancel</button>
+            <script>
+                document.getElementById('save-btn').onclick = () => {
+                    const data = {
+                        id: "${cardId}",
+                        front: document.getElementById('edit-front').value,
+                        back: document.getElementById('edit-back').value
+                    };
+                    // Send data back to the main window
+                    window.opener.postMessage(data, "*");
+                    window.close();
+                };
+            </script>
+        </body>
+        </html>
+    `);
+};
+
+// 3. Listen for the message from the edit window
+window.addEventListener("message", (event) => {
+    const { id, front, back } = event.data;
+    const activeDeck = state.decks.find(d => d.id === state.selectedDeckId);
+    const cardIndex = activeDeck.cards.findIndex(c => c.id === id);
+
+    if (cardIndex > -1) {
+        activeDeck.cards[cardIndex] = { ...activeDeck.cards[cardIndex], front, back };
+        saveState(); // Update localStorage and re-render
+    }
+});
+
 
 loadState();
