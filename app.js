@@ -31,28 +31,27 @@ const render = () => {
         container.innerHTML = activeDeck.cards.map(c => `
             <div class="card" onclick="this.classList.toggle('is-flipped')">
                 <div class="card-inner">
-                    <div class="card-face card-front">${c.front}</div>
+                    <div class="card-face card-front">
+                        ${c.front}
+                        <button class="edit-card-btn" onclick="event.stopPropagation(); openEditWindow('${c.id}')">Edit</button>
+                    </div>
                     <div class="card-face card-back">${c.back}</div>
                 </div>
             </div>
         `).join('');
     }
-    // Inside the render() function, update the card mapping:
-container.innerHTML = filteredCards.map(c => `
-    <div class="card" onclick="this.classList.toggle('is-flipped')">
-        <div class="card-inner">
-            <div class="card-face card-front">
-                ${c.front}
-                <button class="edit-card-btn" onclick="event.stopPropagation(); openEditWindow('${c.id}')">Edit</button>
-            </div>
-            <div class="card-face card-back">${c.back}</div>
-        </div>
-    </div>
-`).join('');
-
 };
 
 window.selectDeck = (id) => { state.selectedDeckId = id; saveState(); };
+
+window.deleteDeck = (event, id) => {
+    event.stopPropagation();
+    if (confirm("Delete this deck?")) {
+        state.decks = state.decks.filter(d => d.id !== id);
+        if (state.selectedDeckId === id) state.selectedDeckId = null;
+        saveState();
+    }
+};
 
 document.getElementById('new-deck-btn').onclick = () => {
     const name = prompt("Deck Name:");

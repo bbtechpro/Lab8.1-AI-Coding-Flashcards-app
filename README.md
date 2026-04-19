@@ -777,3 +777,4 @@ Fixed the save button issue for card editing. The problem was that the form subm
 
 ## This last "fix" deleted the cards I already had and broke the "Add Card" button. I am going to undo the last changes.
 I undid the changes and my deck of cards came back and my "Add Card" button works again. I may have to find the previous bug of the editing of the cards not saving and fix it manually.
+
