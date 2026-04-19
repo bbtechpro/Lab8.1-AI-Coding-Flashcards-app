@@ -1,4 +1,4 @@
-let state = { decks: [], selectedDeckId: null };
+let state = { decks: [], selectedDeckId: null, searchQuery: '' };
 
 const loadState = () => {
     const saved = localStorage.getItem('flashcards_state');
@@ -26,10 +26,20 @@ const render = () => {
     const activeDeck = state.decks.find(d => d.id === state.selectedDeckId);
     document.getElementById('add-card-btn').disabled = !activeDeck;
     document.getElementById('shuffle-btn').disabled = !activeDeck;
+    document.getElementById('search-btn').disabled = !activeDeck;
     
     if (activeDeck) {
         document.getElementById('current-deck-title').textContent = activeDeck.name;
-        container.innerHTML = activeDeck.cards.map(c => `
+        
+        // Filter cards based on search query
+        const filteredCards = state.searchQuery 
+            ? activeDeck.cards.filter(card => 
+                card.front.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
+                card.back.toLowerCase().includes(state.searchQuery.toLowerCase())
+              )
+            : activeDeck.cards;
+        
+        container.innerHTML = filteredCards.map(c => `
             <div class="card" onclick="this.classList.toggle('is-flipped')">
                 <div class="card-inner">
                     <div class="card-face card-front">
@@ -43,7 +53,12 @@ const render = () => {
     }
 };
 
-window.selectDeck = (id) => { state.selectedDeckId = id; saveState(); };
+window.selectDeck = (id) => { 
+    state.selectedDeckId = id; 
+    state.searchQuery = ''; // Clear search when switching decks
+    document.getElementById('search-bar').value = '';
+    saveState(); 
+};
 
 window.deleteDeck = (event, id) => {
     event.stopPropagation();
@@ -132,5 +147,17 @@ window.addEventListener("message", (event) => {
     }
 });
 
+// Search functionality
+document.getElementById('search-bar').addEventListener('input', (e) => {
+    state.searchQuery = e.target.value;
+    render();
+});
+
+document.getElementById('search-btn').addEventListener('click', () => {
+    const searchBar = document.getElementById('search-bar');
+    state.searchQuery = searchBar.value;
+    render();
+    searchBar.focus();
+});
 
 loadState();
