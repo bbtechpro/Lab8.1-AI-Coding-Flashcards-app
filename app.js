@@ -25,6 +25,7 @@ const render = () => {
     const container = document.getElementById('cards-container');
     const activeDeck = state.decks.find(d => d.id === state.selectedDeckId);
     document.getElementById('add-card-btn').disabled = !activeDeck;
+    document.getElementById('shuffle-btn').disabled = !activeDeck;
     
     if (activeDeck) {
         document.getElementById('current-deck-title').textContent = activeDeck.name;
@@ -70,6 +71,19 @@ document.getElementById('add-card-btn').onclick = () => {
         saveState();
     }
 };
+
+document.getElementById('shuffle-btn').onclick = () => {
+    const activeDeck = state.decks.find(d => d.id === state.selectedDeckId);
+    if (activeDeck && activeDeck.cards.length > 0) {
+        // Fisher-Yates shuffle algorithm
+        for (let i = activeDeck.cards.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [activeDeck.cards[i], activeDeck.cards[j]] = [activeDeck.cards[j], activeDeck.cards[i]];
+        }
+        saveState();
+    }
+};
+
 window.openEditWindow = (cardId) => {
     const activeDeck = state.decks.find(d => d.id === state.selectedDeckId);
     const card = activeDeck.cards.find(c => c.id === cardId);
