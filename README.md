@@ -527,3 +527,5 @@ Example Seed Prompts (copy/paste)
 “Implement LocalStorage-backed state with versioning and safe defaults.”
 “Create a 3D flip card animation toggled by a button; reset on next card.”
 “Add keyboard shortcuts: Space to flip, ArrowLeft/Right navigate; clean up listeners on unload.”
+
+Link to deployed project: https://bbtechpro.github.io/Lab8.1-AI-Coding-Flashcards-app/
