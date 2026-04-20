@@ -170,6 +170,88 @@ header nav button:hover {
     color: var(--neon-pink);
 }
 
+.skip-link {
+    position: absolute;
+    left: -999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.skip-link:focus-visible {
+    left: 1rem;
+    top: 1rem;
+    width: auto;
+    height: auto;
+    padding: 0.75rem 1rem;
+    background: rgba(0, 212, 255, 0.95);
+    color: #0f172a;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    z-index: 999;
+}
+
+.deck-item,
+.delete-deck-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+}
+
+.deck-item {
+    flex: 1;
+    text-align: left;
+    padding: 0;
+    cursor: pointer;
+    min-height: 2rem;
+}
+
+.deck-item:focus-visible,
+.delete-deck-btn:focus-visible,
+.card:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid var(--neon-cyan);
+    outline-offset: 3px;
+}
+
+.delete-deck-btn {
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    line-height: 1;
+}
+
+.empty-state {
+    display: grid;
+    place-items: center;
+    gap: 1rem;
+    text-align: center;
+    padding: 2rem;
+    margin-top: 1rem;
+    border: 2px dashed rgba(0, 212, 255, 0.2);
+    border-radius: var(--radius-md);
+    background: rgba(15, 23, 42, 0.75);
+    color: var(--text-secondary);
+}
+
+.empty-icon {
+    font-size: 3rem;
+}
+
+.empty-state h3 {
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.empty-state p {
+    max-width: 32rem;
+    margin: 0;
+}
+
 main {
     padding: 2rem;
 }

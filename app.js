@@ -14,43 +14,69 @@ const saveState = () => {
 const render = () => {
     // Render Decks
     const list = document.getElementById('decks-list');
+    const sidebarEmpty = document.getElementById('sidebar-empty');
     list.innerHTML = state.decks.map(d => `
-        <li class="${state.selectedDeckId === d.id ? 'active' : ''}" onclick="selectDeck('${d.id}')">
-            ${d.name}
-            <button onclick="deleteDeck(event, '${d.id}')">×</button>
+        <li class="${state.selectedDeckId === d.id ? 'active' : ''}">
+            <button class="deck-item" type="button" onclick="selectDeck('${d.id}')">${d.name}</button>
+            <button class="delete-deck-btn" type="button" aria-label="Delete deck ${d.name}" onclick="deleteDeck(event, '${d.id}')">×</button>
         </li>
     `).join('');
+    sidebarEmpty.hidden = state.decks.length > 0;
 
     // Render Cards for active deck
     const container = document.getElementById('cards-container');
+    const cardsEmpty = document.getElementById('cards-empty');
+    const cardsEmptyTitle = document.getElementById('cards-empty-title');
+    const cardsEmptyMessage = document.getElementById('cards-empty-message');
     const activeDeck = state.decks.find(d => d.id === state.selectedDeckId);
     document.getElementById('add-card-btn').disabled = !activeDeck;
-    document.getElementById('shuffle-btn').disabled = !activeDeck;
-    document.getElementById('search-btn').disabled = !activeDeck;
+    document.getElementById('shuffle-btn').disabled = !activeDeck || (activeDeck && activeDeck.cards.length === 0);
+    document.getElementById('search-btn').disabled = !activeDeck || (activeDeck && activeDeck.cards.length === 0);
     
-    if (activeDeck) {
-        document.getElementById('current-deck-title').textContent = activeDeck.name;
-        
-        // Filter cards based on search query
-        const filteredCards = state.searchQuery 
-            ? activeDeck.cards.filter(card => 
-                card.front.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
-                card.back.toLowerCase().includes(state.searchQuery.toLowerCase())
-              )
-            : activeDeck.cards;
-        
-        container.innerHTML = filteredCards.map(c => `
-            <div class="card" onclick="this.classList.toggle('is-flipped')">
-                <div class="card-inner">
-                    <div class="card-face card-front">
-                        ${c.front}
-                        <button class="edit-card-btn" onclick="event.stopPropagation(); openEditWindow('${c.id}')">Edit</button>
-                    </div>
-                    <div class="card-face card-back">${c.back}</div>
-                </div>
-            </div>
-        `).join('');
+    if (!activeDeck) {
+        document.getElementById('current-deck-title').textContent = 'Select a Deck';
+        container.innerHTML = '';
+        cardsEmpty.hidden = false;
+        cardsEmptyTitle.textContent = 'Select a deck';
+        cardsEmptyMessage.textContent = 'Choose a deck to view and add cards.';
+        return;
     }
+
+    document.getElementById('current-deck-title').textContent = activeDeck.name;
+    
+    // Filter cards based on search query
+    const filteredCards = state.searchQuery 
+        ? activeDeck.cards.filter(card => 
+            card.front.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
+            card.back.toLowerCase().includes(state.searchQuery.toLowerCase())
+          )
+        : activeDeck.cards;
+
+    if (filteredCards.length === 0) {
+        container.innerHTML = '';
+        cardsEmpty.hidden = false;
+        if (activeDeck.cards.length === 0) {
+            cardsEmptyTitle.textContent = 'No cards yet';
+            cardsEmptyMessage.textContent = 'Add your first card using the New Card button.';
+        } else {
+            cardsEmptyTitle.textContent = 'No matching cards';
+            cardsEmptyMessage.textContent = `No cards matched “${state.searchQuery}”. Try another search term.`;
+        }
+        return;
+    }
+
+    cardsEmpty.hidden = true;
+    container.innerHTML = filteredCards.map(c => `
+        <div class="card" role="button" tabindex="0" aria-label="Flip card" onclick="this.classList.toggle('is-flipped')" onkeydown="handleCardKeyDown(event)">
+            <div class="card-inner">
+                <div class="card-face card-front">
+                    ${c.front}
+                    <button class="edit-card-btn" type="button" aria-label="Edit card" onclick="event.stopPropagation(); openEditWindow('${c.id}')">Edit</button>
+                </div>
+                <div class="card-face card-back">${c.back}</div>
+            </div>
+        </div>
+    `).join('');
 };
 
 window.selectDeck = (id) => { 
@@ -116,8 +142,8 @@ window.openEditWindow = (cardId) => {
             <textarea id="edit-front" style="width:100%; height:100px;">${card.front}</textarea><br><br>
             <label>Back:</label><br>
             <textarea id="edit-back" style="width:100%; height:100px;">${card.back}</textarea><br><br>
-            <button id="save-btn">Save Changes</button>
-            <button onclick="window.close()">Cancel</button>
+            <button id="save-btn" type="button">Save Changes</button>
+            <button type="button" onclick="window.close()">Cancel</button>
             <script>
                 document.getElementById('save-btn').onclick = () => {
                     const data = {
@@ -133,6 +159,13 @@ window.openEditWindow = (cardId) => {
         </body>
         </html>
     `);
+};
+
+window.handleCardKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        event.currentTarget.classList.toggle('is-flipped');
+    }
 };
 
 // 3. Listen for the message from the edit window

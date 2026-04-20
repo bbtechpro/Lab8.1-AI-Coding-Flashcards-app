@@ -13,31 +13,40 @@
     <a href="#main-content" class="skip-link">Skip to main content</a>
     <header>
         <h1>Flashcards</h1>
-        <nav><button id="new-deck-btn">New Deck</button></nav>
+        <nav><button id="new-deck-btn" type="button" aria-label="Create a new deck">New Deck</button></nav>
     </header>
 
     <div class="app-container">
         <aside id="sidebar" role="complementary" aria-label="Decks sidebar">
             <h2>Decks</h2>
-            <ul id="decks-list"></ul>
+            <ul id="decks-list" aria-label="List of decks"></ul>
+            <div id="sidebar-empty" class="empty-state" role="status" aria-live="polite" hidden>
+                <div class="empty-icon" aria-hidden="true">🪐</div>
+                <h3>No decks yet</h3>
+                <p>Start by creating a deck with the New Deck button above.</p>
+            </div>
         </aside>
 
         <main id="main-content" role="main">
             <section id="cards-section">
-                <!-- Inside <main id="main-content">, update the toolbar -->
                 <div class="toolbar">
                     <h2 id="current-deck-title">Select a Deck</h2>
                     <div class="controls">
                         <div class="search-container">
                             <input type="text" id="search-bar" placeholder="Search cards..." aria-label="Search cards">
-                            <button id="search-btn" disabled>🔍</button>
+                            <button id="search-btn" type="button" aria-label="Search cards" disabled>🔍</button>
                         </div>
-                        <button id="shuffle-btn" disabled>Shuffle</button>
-                        <button id="add-card-btn" disabled>New Card</button>
+                        <button id="shuffle-btn" type="button" disabled>Shuffle</button>
+                        <button id="add-card-btn" type="button" disabled>New Card</button>
                     </div>
                 </div>
 
-                <div id="cards-container"></div>
+                <div id="cards-container" aria-live="polite"></div>
+                <div id="cards-empty" class="empty-state" role="status" aria-live="polite" hidden>
+                    <div class="empty-icon" aria-hidden="true">✨</div>
+                    <h3 id="cards-empty-title">Select a deck</h3>
+                    <p id="cards-empty-message">Choose a deck to view and add cards.</p>
+                </div>
             </section>
         </main>
     </div>
